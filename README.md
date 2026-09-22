@@ -7,7 +7,7 @@
 | 文件 | 说明 | 体积 |
 |---|---|---|
 | `index.html` | 站点入口，两个报告的导航页 | 7 KB |
-| `2026暑期档游戏媒体内容洞察与约稿规划_v27.html` | 主报告，含 21 张交互图表 | 9.2 MB |
+| `2026暑期档游戏媒体内容洞察与约稿建议_v27.html` | 主报告，含 21 张交互图表 | 9.2 MB |
 | `2026暑期档游戏媒体画像_v27.html` | 21 家媒体逐家画像子页 | 0.65 MB |
 | `assets/ms-logo.png` | MediaScope 平台标识 | 27 KB |
 
@@ -22,9 +22,25 @@
 
 ## 部署
 
-推送到 `main` 分支后，`.github/workflows/deploy.yml` 会自动把站点文件发布到 `gh-pages` 分支。仓库 Settings → Pages → Source 需设为 `Deploy from a branch` + `gh-pages` + `/ (root)`。
+站点地址：https://9w9-g.github.io/MediaScope/
 
-首次部署约 1 到 2 分钟生效。
+`main` 分支是源，`gh-pages` 分支是发布分支（Pages 的 Source 设为 `Deploy from a branch` + `gh-pages` + `/ (root)`）。当前用 gh-pages 分支直推发布，没有启用 GitHub Actions。
+
+更新报告后三步：
+
+```bash
+# 1. 提交到 main
+git add -A && git commit -m "更新报告"
+
+# 2. 让 gh-pages 指向 main 的最新提交
+gh api -X PATCH /repos/9w9-g/MediaScope/git/refs/heads/gh-pages \
+  -f sha=$(git rev-parse main)
+
+# 3. 触发构建（首次构建常卡住，手动触发更可靠）
+gh api -X POST /repos/9w9-g/MediaScope/pages/builds
+```
+
+构建约 40 秒完成。若 `git push` 被环境拦截，第 1 步可改用 GitHub 网页上传或 contents API。
 
 ## 注意
 
