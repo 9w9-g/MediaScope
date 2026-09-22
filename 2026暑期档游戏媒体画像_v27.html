@@ -12,15 +12,17 @@ html{scroll-behavior:smooth}
 body.ms-platform{--navy:#0f2b52;--blue:#2f6fed;--blue-2:#0891b2;--green:#0f9d76;--amber:#d97706;--red:#e0483c;
 --ink:#111a2b;--muted:#5f708a;--line:#e5ebf4;--bg:#f4f6fa;--card:#fff;
 background:var(--bg);color:var(--ink);font-size:14px;line-height:1.72;margin:0}
-body.ms-platform .wrap{width:100%;max-width:none;margin:0;padding:14px 24px 92px}
-body.ms-platform .ms-page{width:100%;max-width:none;margin:0;padding:14px 24px 92px;display:grid;gap:14px}
+/* 阅读带收口：平台外壳与正文共用一条 1280 基线，宽屏两侧留白，
+   避免正文行宽与图表随视口无限拉伸（此前 max-width:none 会撑到视口全宽）。 */
+body.ms-platform .wrap{width:100%;max-width:1280px;margin:0 auto;padding:16px 28px 92px}
+body.ms-platform .ms-page{width:100%;max-width:1280px;margin:0 auto;padding:16px 28px 92px;display:grid;gap:14px}
 body.ms-platform h1,body.ms-platform h2,body.ms-platform h3,body.ms-platform h4{letter-spacing:-.02em;text-wrap:balance;margin:0}
 body.ms-platform a{color:#2455c3;text-decoration:none}
 body.ms-platform a:hover{text-decoration:underline}
 
 /* ---------- 顶部栏 ---------- */
 .ms-topbar{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-.ms-topbar-in{width:100%;max-width:none;margin:0;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.ms-topbar-in{width:100%;max-width:1280px;margin:0 auto;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .ms-brand{display:flex;align-items:center;gap:9px;min-width:0}
 .ms-brand-logo{height:30px;width:auto;display:block;flex:0 0 auto}
 .ms-mark{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#2f6fed,#0891b2);color:#fff;font:800 12px/1 ui-monospace,Consolas,monospace}
@@ -240,8 +242,12 @@ body.ms-platform .case-entry summary{cursor:pointer;color:#2f6fed;font-size:11.5
 body.ms-platform .case-entry details p{padding:8px 10px;margin:6px 0 0;border-radius:8px;background:#f7f9fc;color:#56647a;font-size:11.5px;white-space:pre-wrap}
 body.ms-platform .evidence-card,body.ms-platform .category-card,body.ms-platform .media-card,body.ms-platform .opportunity-card,body.ms-platform .low-card{padding:16px 17px;border:1px solid var(--line);border-radius:13px;background:#fff;box-shadow:0 6px 18px rgba(24,52,95,.045)}
 body.ms-platform .boundary-note{margin-top:12px;padding:11px 13px;border-left:3px solid #e6a340;border-radius:0 9px 9px 0;background:#fff8ec;color:#6c5635;font-size:12px}
-body.ms-platform .chart{overflow-x:auto;margin:8px 0 4px}
-body.ms-platform .chart svg{max-width:100%;height:auto;display:block;margin:0 auto}
+/* 图表卡片：柔化阴影 + 大圆角 + 宽松内距。
+   SVG 宽度上限：CSS 先兜底 min(100%,1000px)，再由 V27_JS 按各图 viewBox 精调，
+   使宽屏下图内字号与正文字号同级，不再随视口无限放大。 */
+body.ms-platform .chart{overflow-x:auto;margin:18px 0 16px;padding:20px 22px 15px;
+border:1px solid var(--ms-hair);border-radius:16px;background:#fff;box-shadow:var(--ms-elev-sm)}
+body.ms-platform .chart svg{max-width:min(100%,1000px);height:auto;display:block;margin:0 auto}
 body.ms-platform .ct{font-size:12.5px;color:#41526b;font-weight:650;margin-bottom:8px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .ms-ct-note{color:#8294ab;font-weight:400;font-size:11.5px}
 body.ms-platform table{max-width:100%}
@@ -251,6 +257,51 @@ body.ms-platform details.acc>summary .so{font-weight:400;color:#8294ab;font-size
 body.ms-platform details.acc>div{padding:14px 16px}
 body.ms-platform pre{max-width:100%;overflow-x:auto}
 body.ms-platform .foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);color:#8294ab;font-size:11.5px;line-height:1.8}
+
+/* ---------- 正文呈现层：阅读节奏与层次 ----------
+   选择器统一限定在 section[id]（01–08 与两个附录），不触碰外壳仪表盘。
+   只调整间距、字号梯度、色阶与阴影，不改动任何措辞、结构与数据。 */
+
+/* 章节节奏：报告信息密度高，用 64–96px 的呼吸感而非大留白 */
+body.ms-platform section[id]{margin:0 0 26px}
+body.ms-platform section[id]+section[id]{margin-top:64px}
+body.ms-platform section[id]>h2{margin:0 0 18px}
+body.ms-platform section[id]>h3{margin:28px 0 12px}
+body.ms-platform section[id] h4{margin:16px 0 8px}
+
+/* 段落与列表：行高 1.78、段距 12px，marker 用低对比灰蓝 */
+body.ms-platform section[id] p{line-height:1.78;margin:0 0 12px}
+body.ms-platform section[id] ul,body.ms-platform section[id] ol{padding-left:20px;margin:0 0 12px}
+body.ms-platform section[id] li{margin:6px 0;line-height:1.75}
+body.ms-platform section[id] li::marker{color:#9aa8bd}
+body.ms-platform section[id] p:last-child,body.ms-platform section[id] ul:last-child{margin-bottom:0}
+
+/* 图表文字层次：标题 13px 主导 / 副说明 11.5px 次级 / 脚注 11px 最弱 */
+body.ms-platform .ct{font-size:13px;letter-spacing:-.01em}
+body.ms-platform .cs{color:#8a94a6;font-size:11.5px;margin-bottom:12px;line-height:1.55}
+body.ms-platform .cft{color:#8a94a6;font-size:11px;line-height:1.6;margin-top:12px;padding-top:9px;border-top:1px dashed #eceff5}
+body.ms-platform .lg{font-size:11.5px;color:#7b8ca3;margin-top:10px;gap:14px}
+
+/* 结论块与注释：内距放宽到 16–18px，圆角与卡片体系对齐 */
+body.ms-platform section[id] .lead{padding:16px 18px;border-radius:0 12px 12px 0;font-size:13.2px;line-height:1.75}
+body.ms-platform section[id] .note{padding:11px 14px;border-radius:10px;line-height:1.7}
+body.ms-platform section[id] .boundary-note{padding:12px 15px;line-height:1.7}
+
+/* 折叠块：summary 内距放宽，hover 只换底色，不做位移 */
+body.ms-platform details.acc{margin:16px 0;border-color:var(--ms-hair);border-radius:14px;box-shadow:var(--ms-elev-sm)}
+body.ms-platform details.acc>summary{padding:14px 18px;transition:background .45s var(--ms-ease)}
+body.ms-platform details.acc>summary:hover{background:#f2f6fc}
+body.ms-platform details.acc>div{padding:16px 18px}
+
+/* 数据一律等宽对齐，避免列间数字跳动 */
+body.ms-platform section[id]{font-variant-numeric:tabular-nums}
+
+/* 入场：只做极轻的 fade-up，隐藏由 JS 添加 ms-reveal 负责，
+   JS 未执行时元素保持可见；尊重 prefers-reduced-motion */
+.ms-reveal{opacity:0;transform:translateY(10px);transition:opacity .7s var(--ms-ease),transform .7s var(--ms-ease)}
+.ms-reveal.ms-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+.ms-reveal,.ms-reveal.ms-in{opacity:1;transform:none;transition:none}}
 
 /* ---------- 首屏布局收口：贴合平台横板比例 ---------- */
 .ms-hero{display:block;margin:12px 0 12px;padding:18px 24px 16px;border-radius:14px}
@@ -292,14 +343,16 @@ body.ms-platform .ms-quick-head h3{margin:0;line-height:1.35;font-size:14.5px}
 body.ms-platform .ms-stage h4{margin:0 0 8px;font-size:12.5px;color:#41526b;font-weight:650}
 .ms-find b{line-height:1.45}
 body.ms-platform .ms-find p{margin:0}
-body.ms-platform .ms-panel .chart{background:transparent;border:0;border-radius:0;padding:0;margin:0}
-.ms-dash-split{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
-.ms-chart-box{max-width:520px;min-width:0}
+body.ms-platform .ms-panel .chart{background:transparent;border:0;border-radius:0;padding:0;margin:0;box-shadow:none}
+/* 概览面板内改为上下堆叠：月度趋势图设计宽度 520，放在左栏只有 430px 可用，
+   图内字会被压到 8px；整行铺开后按 1.14 上限渲染，字号回到 11px 以上。 */
+.ms-dash-split{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-items:start}
+.ms-chart-box{max-width:none;min-width:0}
 
 /* 主要节点构成：横向 chip 组 */
 .ms-stage{margin-top:0;padding-top:0;border-top:0}
 .ms-stage h4{margin-bottom:9px;font-size:12.5px;padding-bottom:7px;border-bottom:1px solid #eef2f8}
-.ms-stage ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ms-stage ul{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .ms-stage li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 7px;align-items:center;padding:7px 8px;border:1px solid #eef2f8;border-radius:10px;background:linear-gradient(180deg,#fbfcff,#f6f9fe)}
 .ms-stage-ic{grid-row:1/3;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;background:#eaf1fe;color:#2f6fed;font-size:10.5px}
 .ms-stage-name{grid-column:2/3;flex:none;font-size:11px;font-weight:650}
@@ -346,6 +399,9 @@ body.ms-platform .ms-panel .chart{background:transparent;border:0;border-radius:
  .ms-quick-body{grid-template-columns:minmax(0,1fr)}
  .ms-search{min-width:150px}
  .ms-crumb{display:none}
+ /* 窄屏把图内距让给图本身，章节间距同步收窄 */
+ body.ms-platform .chart{padding:14px 14px 11px}
+ body.ms-platform section[id]+section[id]{margin-top:44px}
 }
 @media(max-width:640px){
  body.ms-platform{font-size:13px}
@@ -487,6 +543,8 @@ body.ms-platform .pb,body.ms-platform .brief-card,body.ms-platform .case-card{bo
 body.ms-platform .ms-panel:before,body.ms-platform .ms-quick-card:before{display:none}
 body.ms-platform .ms-panel,body.ms-platform .ms-quick-card{background:#fff;border-color:#e5ebf4;
 padding:16px 18px}
+.ms-reveal{opacity:1!important;transform:none!important;transition:none!important}
+body.ms-platform .chart svg{max-width:100%}
 }
 
 
